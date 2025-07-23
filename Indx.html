@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <title>حاسبة العمر بالهجري والميلادي</title>
+    <script src="https://cdn.jsdelivr.net/npm/ummalqura-calendar@2.0.2/dist/ummalqura-calendar.min.js"></script>
+    <style>
+        body {
+            font-family: Tahoma, Arial;
+            background: #f1f3f5;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin: 0;
+            min-height: 100vh;
+            direction: rtl;
+        }
+        .container {
+            background: #fff;
+            margin-top: 50px;
+            padding: 30px 40px;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            width: 340px;
+        }
+        h2 {
+            color: #1976d2;
+            text-align: center;
+        }
+        label {
+            display: block;
+            margin-bottom: 10px;
+            font-size: 16px;
+        }
+        input[type="date"] {
+            width: 100%;
+            padding: 8px 10px;
+            font-size: 16px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            margin-bottom: 18px;
+        }
+        button {
+            width: 100%;
+            background: #1976d2;
+            color: #fff;
+            padding: 12px 0;
+            border: none;
+            border-radius: 5px;
+            font-size: 18px;
+            cursor: pointer;
+        }
+        button:hover {
+            background: #1765b7;
+        }
+        .result {
+            margin-top: 25px;
+            text-align: center;
+            font-size: 18px;
+            color: #222;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>حاسبة العمر بالهجري والميلادي</h2>
+        <label for="birthdate">أدخل تاريخ ميلادك الميلادي:</label>
+        <input type="date" id="birthdate">
+        <button onclick="calculateAge()">احسب العمر</button>
+        <div class="result" id="result"></div>
+    </div>
+
+    <script>
+        function calculateAge() {
+            const input = document.getElementById('birthdate').value;
+            if (!input) {
+                document.getElementById('result').innerHTML = "يرجى إدخال تاريخ الميلاد أولاً.";
+                return;
+            }
+            const birthDate = new Date(input);
+            const today = new Date();
+
+            // حساب العمر الميلادي
+            let ageY = today.getFullYear() - birthDate.getFullYear();
+            let ageM = today.getMonth() - birthDate.getMonth();
+            let ageD = today.getDate() - birthDate.getDate();
+
+            if (ageD < 0) {
+                ageM--;
+                ageD += new Date(today.getFullYear(), today.getMonth(), 0).getDate();
+            }
+            if (ageM < 0) {
+                ageY--;
+                ageM += 12;
+            }
+
+            // تحويل تاريخ الميلاد إلى هجري
+            const ummalqura = window.UmmalquraCalendar;
+            const hBirth = ummalqura.toUmmalqura(birthDate.getFullYear(), birthDate.getMonth()+1, birthDate.getDate());
+            const hToday = ummalqura.toUmmalqura(today.getFullYear(), today.getMonth()+1, today.getDate());
+
+            // حساب العمر الهجري
+            let hAgeY = hToday[0] - hBirth[0];
+            let hAgeM = hToday[1] - hBirth[1];
+            let hAgeD = hToday[2] - hBirth[2];
+
+            if (hAgeD < 0) {
+                hAgeM--;
+                hAgeD += 30; // متوسط أيام الشهر الهجري
+            }
+            if (hAgeM < 0) {
+                hAgeY--;
+                hAgeM += 12;
+            }
+
+            // عرض الناتج
+            document.getElementById('result').innerHTML = `
+                <b>العمر الميلادي:</b><br>
+                ${ageY} سنة و ${ageM} شهر و ${ageD} يوم<br><br>
+                <b>العمر الهجري:</b><br>
+                ${hAgeY} سنة و ${hAgeM} شهر و ${hAgeD} يوم
+            `;
+        }
+    </script>
+</body>
+</html>
